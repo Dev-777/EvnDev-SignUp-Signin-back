@@ -22,4 +22,4 @@ const signUpTemplate = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("myTable", signUpTemplate);
+module.exports = mongoose.model("all users", signUpTemplate);
