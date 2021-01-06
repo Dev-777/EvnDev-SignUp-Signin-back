@@ -7,8 +7,13 @@ router.post("/signup", async (req, res) => {
   const saltPassword = await bcrypt.genSalt(10);
   const securePassword = await bcrypt.hash(req.body.password, saltPassword);
 
+
+console.log(req, 'test obj');
+
+
+
   const signedUpUser = new signupTemplateCopy({
-    fullName: req.body.fullName,
+    name: req.body.name,
     username: req.body.username,
     email: req.body.email,
     password: securePassword,
