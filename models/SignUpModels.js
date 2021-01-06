@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const signUpTemplate = new mongoose.Schema({
-  fullName: {
+  name: {
     type: String,
     required: true,
   },
