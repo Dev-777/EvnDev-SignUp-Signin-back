@@ -21,15 +21,13 @@ const sendMailFunc = (email, code) => {
     subject: "Sending Email using Node.js",
     text: `this is the approve code\` ${code}`,
   };
-  transporter
-    .sendMail(mailOptions, (error, info) => {
-      if (error) {
-        console.log(error);
-      } else {
-        console.log("Email sent: " + info.response);
-      }
-    })
-    .catch((err) => console.log(err));
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log("Email sent: " + info.response);
+    }
+  });
 };
 
 router.post("/approve", async (req, res) => {
@@ -52,14 +50,11 @@ router.post("/approve", async (req, res) => {
 router.post("/signup", (req, res) => {
   user = req;
   code = Math.floor(Math.random() * 10);
-  sendMailFunc(req.email, code);
+  // sendMailFunc(req.email, code);
 });
 
 router.get("/data17", (req, res) => {
-  signupTemplateCopy
-    .find()
-    .then((data) => res.json(data))
-    .then(() => sendMailFunc());
+  signupTemplateCopy.find().then((data) => res.json(data));
 });
 
 router.delete("/data1723/:id", (req, res) => {
