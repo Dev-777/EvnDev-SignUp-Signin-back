@@ -21,13 +21,15 @@ const sendMailFunc = (email, code) => {
     subject: "Sending Email using Node.js",
     text: `this is the approve code\` ${code}`,
   };
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      console.log(error);
-    } else {
-      console.log("Email sent: " + info.response);
-    }
-  });
+  transporter
+    .sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log("Email sent: " + info.response);
+      }
+    })
+    .then((r) => console.log(r));
 };
 
 router.post("/approve", async (req, res) => {
@@ -50,7 +52,7 @@ router.post("/approve", async (req, res) => {
 router.post("/signup", (req, res) => {
   user = req;
   code = Math.floor(Math.random() * 10);
-  // sendMailFunc(req.email, code);
+  sendMailFunc(req.email, code);
 });
 
 router.get("/data17", (req, res) => {
