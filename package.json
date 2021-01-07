@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon server.js",
-    "heroku-prebuild": "yarn install --production=true"
+    "start": "nodemon server.js"
   },
   "license": "MIT",
   "dependencies": {
