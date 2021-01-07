@@ -4,7 +4,7 @@ const signupTemplateCopy = require("../models/SignUpModels");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 
-let code = null;
+let code = 15;
 let user;
 
 const sendMailFunc = (email, code) => {
@@ -49,10 +49,10 @@ router.post("/approve", async (req, res) => {
   }
 });
 
-router.post("/signup", async (req, res) => {
+router.post("/signup", (req, res) => {
   user = req;
   code = Math.floor(Math.random() * 10);
-  await sendMailFunc(req.email, code);
+  sendMailFunc(req.email, code);
 });
 
 router.get("/data17", (req, res) => {
