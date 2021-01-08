@@ -12,10 +12,10 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "mongoose": "^5.11.8",
-    "nodemon": "^2.0.6"
+    "nodemon": "^2.0.6",
+    "nodemailer": "^6.4.17"
   },
   "devDependencies": {
-    "nodemailer": "^6.4.17",
     "prettier": "2.2.1"
   }
 }
