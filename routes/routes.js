@@ -30,7 +30,7 @@ const sendMailFunc = (email, code) => {
   });
 };
 
-router.post("/approve", cors(), async (req, res) => {
+router.post("/approve", async (req, res) => {
   if (code === +req.body.code) {
     const saltPassword = await bcrypt.genSalt(10);
     const securePassword = await bcrypt.hash(user.password, saltPassword);
