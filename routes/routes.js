@@ -3,13 +3,9 @@ const router = express.Router();
 const signupTemplateCopy = require("../models/SignUpModels");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
-const cors = require("cors");
 
 let code = null;
 let user = {};
-const corsConfig = {
-  origin: "http://localhost:3000",
-};
 
 const sendMailFunc = (email, code) => {
   const transporter = nodemailer.createTransport({
@@ -34,7 +30,7 @@ const sendMailFunc = (email, code) => {
   });
 };
 
-router.post("/approve", cors(corsConfig), async (req, res) => {
+router.post("/approve", async (req, res) => {
   if (code === +req.body.code) {
     const saltPassword = await bcrypt.genSalt(10);
     const securePassword = await bcrypt.hash(user.password, saltPassword);
@@ -54,17 +50,17 @@ router.post("/approve", cors(corsConfig), async (req, res) => {
   }
 });
 
-router.post("/signup", cors(corsConfig), (req, res) => {
+router.post("/signup", (req, res) => {
   user = req.body;
   code = Math.floor(Math.random() * 1000);
   sendMailFunc(req.body.email, code);
 });
 
-router.get("/data17", cors(corsConfig), (req, res) => {
+router.get("/data17", (req, res) => {
   signupTemplateCopy.find().then((data) => res.json(data));
 });
 
-router.delete("/data1723/:id", cors(corsConfig), (req, res) => {
+router.delete("/data1723/:id", (req, res) => {
   signupTemplateCopy
     .findByIdAndDelete(req.params.id)
     .then(() => res.json({ remove: true }));
