@@ -25,7 +25,7 @@ const port = process.env.PORT || 8080;
 const cors_proxy = require("cors-anywhere");
 cors_proxy
   .createServer({
-    originWhitelist: ["http://localhost:3001"],
+    originWhitelist: [],
     requireHeader: ["origin", "x-requested-with"],
     removeHeaders: ["cookie", "cookie2"],
   })
