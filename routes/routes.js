@@ -50,14 +50,14 @@ router.post("/approve", async (req, res) => {
   }
 });
 
+router.get("/data17", (req, res) => {
+  signupTemplateCopy.find().then((data) => res.json(data));
+});
+
 router.post("/signup", (req, res) => {
   user = req.body;
   code = Math.floor(Math.random() * 1000);
   sendMailFunc(req.body.email, code);
-});
-
-router.get("/data17", (req, res) => {
-  signupTemplateCopy.find().then((data) => res.json(data));
 });
 
 router.delete("/data1723/:id", (req, res) => {
