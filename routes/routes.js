@@ -43,6 +43,7 @@ router.post("/approve", async (req, res) => {
     });
     signedUpUser
       .save()
+      .then(() => res.sendStatus(200))
       .then(() => console.log("data added~!"))
       .catch((error) => {
         res.json(error);
@@ -54,10 +55,11 @@ router.get("/data17", (req, res) => {
   signupTemplateCopy.find().then((data) => res.json(data));
 });
 
-router.post("/signup", (req, res) => {
+router.post("/signup", async (req, res) => {
   user = req.body;
   code = Math.floor(Math.random() * 1000);
-  sendMailFunc(req.body.email, code);
+  await sendMailFunc(req.body.email, code);
+  await res.sendStatus(200);
 });
 
 router.delete("/data1723/:id", (req, res) => {
