@@ -2,48 +2,33 @@ const express = require("express");
 const router = express.Router();
 const signupTemplateCopy = require("../models/SignUpModels");
 const bcrypt = require("bcrypt");
-const nodemailer = require("nodemailer");
+const sendMail = require("./functions");
+
+let str = null;
+
+//////////////////////////////////////
+router.post("/test44", (req, res) => {
+  str = req.body.input;
+  res.sendStatus(200);
+});
+
+router.get("/test33", (req, res) => {
+  res.send(str);
+});
+//////////////////////////////////////
 
 const users = [];
-
-const sendMailFunc = (email, code) => {
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: "arsen.ghazaryanT@gmail.com",
-      pass: "Aa!234567890",
-    },
-  });
-  const mailOptions = {
-    from: "arsen.ghazaryanT@gmail.com",
-    to: email,
-    subject: "Sending Email using Node.js",
-    text: `this is the approve code\` ${code}`,
-  };
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      console.log(error);
-    } else {
-      console.log("Email sent: " + info.response);
-    }
-  });
-};
-
 router.post("/signup", async (req, res) => {
   const code = Math.floor(Math.random() * 10000);
   const request1 = req.body;
   request1.code = code;
   users.push(request1);
-  await sendMailFunc(req.body.email, code);
+  await sendMail.sendMailFunc(req.body.email, code);
   await res.send({ message: "mail was sanded" }).status(200);
 });
 
 router.post("/approve", async (req, res) => {
-  const foundUser = users.find((i) => {
-    if (i.code === +req.body.code) {
-      return i;
-    }
-  });
+  const foundUser = users.find((i) => (i.code === +req.body.code ? i : null));
   if (foundUser) {
     const saltPassword = await bcrypt.genSalt(10);
     const securePassword = await bcrypt.hash(foundUser.password, saltPassword);
