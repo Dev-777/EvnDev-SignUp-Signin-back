@@ -2,71 +2,69 @@ const express = require("express");
 const router = express.Router();
 const signupTemplateCopy = require("../models/SignUpModels");
 const bcrypt = require("bcrypt");
-const sendMail = require("./functions");
+const jwt = require("jsonwebtoken");
+const { secret } = require("../config");
+const checkoutToken = require("../middlewaree/checkoutToken");
 
-let str = null;
+const generateAccessToken = (id) => {
+  const payload = { id };
 
-//////////////////////////////////////
-router.post("/test44", (req, res) => {
-  str = req.body.input;
-  res.sendStatus(200);
-});
+  return jwt.sign(payload, secret, { expiresIn: "24h" });
+};
 
-router.get("/test33", (req, res) => {
-  res.send(str);
-});
-//////////////////////////////////////
-
-const users = [];
 router.post("/signup", async (req, res) => {
-  const code = Math.floor(Math.random() * 10000);
-  const request1 = req.body;
-  request1.code = code;
-  users.push(request1);
-  await sendMail.sendMailFunc(req.body.email, code);
-  await res.send({ message: "mail was sanded" }).status(200);
-});
+  try {
+    const { email, password } = req.body;
+    const checkoutExistsUser = await signupTemplateCopy.findOne({ email });
 
-router.post("/approve", async (req, res) => {
-  const foundUser = users.find((i) => (i.code === +req.body.code ? i : null));
-  if (foundUser) {
-    const saltPassword = await bcrypt.genSalt(10);
-    const securePassword = await bcrypt.hash(foundUser.password, saltPassword);
-
-    const signedUpUser = new signupTemplateCopy({
-      name: foundUser.name,
-      username: foundUser.username,
-      email: foundUser.email,
-      password: securePassword,
-    });
-    signedUpUser
-      .save()
-      .then(() => res.sendStatus(200))
-      .then(() => console.log("data added~!"))
-      .catch((error) => {
-        res.json(error);
-      });
+    if (checkoutExistsUser) {
+      return res.status(400).json({ message: "user Exists" });
+    }
+    const newUser = { ...req.body, password: bcrypt.hashSync(password, 7) };
+    const addUser = new signupTemplateCopy(newUser);
+    await addUser.save();
+    res.json({ message: "user successfully added" });
+  } catch (e) {
+    // console.log(e);
+    res.status(400).json({ message: "signup error" });
   }
 });
-router.get("/data17", (req, res) => {
-  signupTemplateCopy.find().then((data) => res.json(data));
+
+router.post("/signin", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const user = await signupTemplateCopy.findOne({ email });
+
+    if (!user) {
+      return res.status(400).json({ message: `user ${email} not found` });
+    }
+    const checkoutPassword = bcrypt.compareSync(password, user.password);
+    if (!checkoutPassword) {
+      return res.status(400).json({ message: "Password is incorrect" });
+    }
+
+    const token = generateAccessToken(user._id);
+    return res.json({ token, lastName: user.lastName });
+  } catch (e) {
+    console.log("catch");
+    res.status(400).json({ message: "signin error" });
+  }
 });
-router.post("/testGet", (req, res) => {
-  signupTemplateCopy
-    .find()
-    .then((data) => {
-      for (let i = 0; i < data.length; ++i) {
-        if (data[i].email === req.body.email) {
-          return res.json(`find bro ${data[i].name}`);
-        }
-      }
-    })
-    .then(() => res.json(false));
-});
-router.delete("/data1723/:id", (req, res) => {
-  signupTemplateCopy
-    .findByIdAndDelete(req.params.id)
-    .then(() => res.json({ remove: true }));
+//
+// router.get("/find", async (req, res) => {
+//   try {
+//
+//   } catch (e) {
+//     // console.log(e);
+//     res.status(400).json({ message: "signin error" });
+//   }
+// });
+
+router.post("/checkoutToken", checkoutToken, async (req, res) => {
+  const usersEmails = [];
+  const users = await signupTemplateCopy.find();
+  users.map((i) => usersEmails.push(i.firstName));
+  res.json(usersEmails);
 });
 
 module.exports = router;
